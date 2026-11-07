@@ -271,8 +271,25 @@ final class MigrationWizard
                 return 1;
             }
 
+            $preflightWarnings = stripos($dryRunOutput, 'WARN') !== false;
+
+            if ($preflightWarnings) {
+                $this->output->write($dryRunOutput, false, OutputInterface::OUTPUT_RAW);
+
+                if (!$this->confirm('Preflight reported warnings. Continue with the migration?', false)) {
+                    DB::rollBack();
+                    $this->error('Migration cancelled; the server row changes were rolled back.');
+                    $this->line('Backup: ' . $backup['dump']);
+
+                    return 1;
+                }
+            }
+
             DB::commit();
-            $this->output->write($dryRunOutput, false, OutputInterface::OUTPUT_RAW);
+
+            if (!$preflightWarnings) {
+                $this->output->write($dryRunOutput, false, OutputInterface::OUTPUT_RAW);
+            }
         } catch (Throwable $e) {
             DB::rollBack();
             $this->error('Could not apply the server row changes: ' . $e->getMessage());
@@ -303,6 +320,11 @@ final class MigrationWizard
 
         $this->line('');
         $this->line('<info>Done.</info>');
+
+        if ($preflightWarnings ?? false) {
+            $this->warn('The migration completed with warnings; review the output above. Skipped services need manual attention.');
+        }
+
         $this->line('Pre-migration backup: ' . $backup['dump']);
         $this->line('');
         $this->line('Next steps:');
