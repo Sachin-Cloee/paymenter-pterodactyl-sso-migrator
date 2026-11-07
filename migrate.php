@@ -472,13 +472,7 @@ final class MigrationWizard
         }
 
         $dumpBinary = $this->resolveDumpBinary();
-        $cnf = tempnam(sys_get_temp_dir(), 'pterosso-cnf-');
-
-        if ($cnf === false) {
-            throw new RuntimeException('Unable to create a temporary MySQL option file.');
-        }
-
-        @chmod($cnf, 0600);
+        $cnf = dirname($destination) . '/.mysql-options-' . bin2hex(random_bytes(8)) . '.cnf';
 
         try {
             $lines = ['[client]', 'host=' . $this->cnfValue((string) ($config['host'] ?? '127.0.0.1'))];
@@ -497,6 +491,8 @@ final class MigrationWizard
             if (file_put_contents($cnf, implode("\n", $lines) . "\n") === false) {
                 throw new RuntimeException('Unable to write the temporary MySQL option file.');
             }
+
+            @chmod($cnf, 0600);
 
             $process = proc_open([
                 $dumpBinary,
