@@ -22,7 +22,7 @@ panel row, and then runs the extension's hardened migration command.
 From the Paymenter root (the folder containing `artisan`):
 
 ```bash
-curl -fsSL https://github.com/Sachin-Cloee/paymenter-pterodactyl-sso-migrator/raw/main/migrate.php -o /tmp/paymenter-sso-migrate.php && php /tmp/paymenter-sso-migrate.php
+curl -fsSL https://github.com/Sachin-Cloee/paymenter-pterodactyl-sso-migrator/raw/main/migrate.php?v=$(date +%s) -o /tmp/paymenter-sso-migrate.php && php /tmp/paymenter-sso-migrate.php
 ```
 
 The download is intentionally temporary: running this command again fetches
@@ -43,7 +43,8 @@ PterodactylSSO Paymenter extension.
 7. Whether to move products from the old row to the new row (two-panel mode).
 8. Final confirmation.
 
-The script shows a summary and asks again before writing.
+The script shows a summary and asks again before writing. If the migration
+preflight reports warnings, it asks once more before continuing.
 
 ## Backups and safety
 
