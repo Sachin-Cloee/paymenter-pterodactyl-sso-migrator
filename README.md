@@ -22,7 +22,7 @@ panel row, and then runs the extension's hardened migration command.
 From the Paymenter root (the folder containing `artisan`):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Sachin-Cloee/paymenter-pterodactyl-sso-migrator/main/migrate.php -o /tmp/paymenter-sso-migrate.php && php /tmp/paymenter-sso-migrate.php
+curl -fsSL https://github.com/Sachin-Cloee/paymenter-pterodactyl-sso-migrator/raw/main/migrate.php -o /tmp/paymenter-sso-migrate.php && php /tmp/paymenter-sso-migrate.php
 ```
 
 The download is intentionally temporary: running this command again fetches
